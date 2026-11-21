@@ -1,0 +1,26 @@
+name: Production CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  test-and-verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run Automated Tests (Blocks Bad Releases)
+        run: pytest
+
+      - name: Build Docker Image (Verify Container)
+        run: docker build -t ai-voice-api:latest .
